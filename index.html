@@ -1,0 +1,37 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<input>
+<span style="position: absolute"></span>
+<script>
+	const isPrime = n => {
+		if(isNaN(n) || n <= 1 || n % 1 !== 0) return false;
+		for(let i = 2; i <= Math.sqrt(n); i++){
+			if(n % i === 0) return false;
+		}
+		return true;
+	};
+
+	const getPowerOfTwoOf = n => {
+		if(n <= 0) return NaN;
+		let power = 0;
+		while(true){
+			if(n & 1){
+				return n === 1 ? power : NaN;
+			}
+			power++;
+			n = n >> 1;
+		}
+	};
+
+	const input = document.querySelector('input');
+	const result = document.querySelector('span');
+	input.addEventListener('input', () => {
+		const n = parseInt(input.value, 10);
+		if(isFinite(n)){
+			const pow = getPowerOfTwoOf(n + 1);
+			const isP = isPrime(pow);
+			result.innerHTML = isP && isPrime(n) ? 'Ez Mersenne prím, mivel ' + n + ' = ' + '2<sup>' + pow + '</sup> - 1.' : 'Ez nem Mersenne-prím.';
+		}else{
+			result.innerHTML = '';
+		}
+	});
+</script>
