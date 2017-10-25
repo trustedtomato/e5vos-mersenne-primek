@@ -10,15 +10,21 @@
 		return true;
 	};
 
+	/** If it is a power of two, returns the power; else returns the closest smaller power multiplied by -1 */
 	const getPowerOfTwoOf = n => {
 		if(n <= 0) return NaN;
 		let power = 0;
+		let oned = false;
 		while(true){
 			if(n & 1){
-				return n === 1 ? power : NaN;
+				if(n === 1){
+					return !oned ? power : -power;
+				}else{
+					oned = true;
+				}
 			}
 			power++;
-			n = n >> 1;
+			n = n >>> 1;
 		}
 	};
 
@@ -26,10 +32,23 @@
 	const result = document.querySelector('span');
 	input.addEventListener('input', () => {
 		const n = parseInt(input.value, 10);
-		if(isFinite(n)){
-			const pow = getPowerOfTwoOf(n + 1);
-			const isP = isPrime(pow);
-			result.innerHTML = isP && isPrime(n) ? 'Ez Mersenne prím, mivel ' + n + ' = ' + '2<sup>' + pow + '</sup> - 1.' : 'Ez nem Mersenne-prím.';
+		if(isFinite(n) && n > 0){
+			if(String(n).length <= 10){
+				const pow = getPowerOfTwoOf(n + 1);
+				if(pow < 0){
+					if(Math.pow(2, -pow) === n){
+						result.innerHTML = 'Ez nem Mersenne-prím, mivel nem Mersenne-szám (' + n + ' = 2<sup>' + -pow + '</sup>)';
+					}else{
+						result.innerHTML = 'Ez nem Mersenne-prím, mivel nem Mersenne-szám (' + n + ' = 2<sup>' + -pow + '</sup> + ' + (n - Math.pow(2, -pow)) + ' = 2<sup>' + (-pow+1) + '</sup> - ' + (Math.pow(2, -pow+1) - n) + ')';
+					}
+				}else if(!isPrime(n)){
+					result.innerHTML = 'Ez nem Mersenne-prím, mivel nem prím. Viszont Mersenne-szám, mivel ' + n + ' = 2<sup>' + pow + '</sup> - 1.';
+				}else{
+					result.innerHTML = 'Ez Mersenne-prím, mivel ' + n + ' = 2<sup>' + pow + '</sup> - 1.';
+				}
+			}else{
+				result.innerHTML = 'A szám legfeljebb 10 számjegyből állhat.';
+			}
 		}else{
 			result.innerHTML = '';
 		}
